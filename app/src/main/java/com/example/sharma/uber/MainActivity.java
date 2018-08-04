@@ -4,7 +4,6 @@ package com.example.sharma.uber;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.mtp.MtpConstants;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -27,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.Objects;
+
+import dmax.dialog.SpotsDialog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -82,10 +83,12 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.setView(login_layout);
         dialog.setPositiveButton("SIGN IN", new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
                 dialogInterface.dismiss();
+                btnSignIn.setEnabled(false);
                 if (TextUtils.isEmpty(edtEmail.getText().toString())) {
                     Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_SHORT).show();
                     return;
@@ -99,10 +102,16 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
+
+                 //final SpotsDialog waitingDialog = new AlertDialog(MainActivity.this,R.style.class);
+               // waitingDialog.show();
+
                 auth.signInWithEmailAndPassword(edtEmail.getText().toString(),edtPassword.getText().toString())
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
+
+                                //waitingDialog.dismiss();
                                 startActivity(new Intent(MainActivity.this,Welcome.class));
                                 finish();
 
@@ -110,7 +119,10 @@ public class MainActivity extends AppCompatActivity {
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                       // waitingDialog.dismiss();
                         Snackbar.make(rootLayout,"Failed"+e.getMessage(),Snackbar.LENGTH_SHORT).show();
+
+                        btnSignIn.setEnabled(true);
                     }
                 });
             }
